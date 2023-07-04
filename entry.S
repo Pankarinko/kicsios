@@ -3,4 +3,4 @@
 .global loop
 
 loop:
-    ret
+    j loop
