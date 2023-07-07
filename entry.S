@@ -1,6 +1,7 @@
 .text
 
-.global loop
+.global asm_entry
 
-loop:
-    j loop
+asm_entry:
+    addi sp, zero, 0x400
+    j c_entry

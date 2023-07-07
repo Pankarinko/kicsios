@@ -1,4 +1,4 @@
-ENTRY(loop)
+ENTRY(asm_entry)
 OUTPUT_ARCH(riscv)
 
 MEMORY {
