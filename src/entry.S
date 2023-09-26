@@ -3,5 +3,8 @@
 .global asm_entry
 
 asm_entry:
-    addi sp, zero, 0x400
+    la sp, asm_stackbottom
     j c_entry
+asm_stacktop:
+    .space 1024
+asm_stackbottom:

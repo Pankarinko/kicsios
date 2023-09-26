@@ -28,7 +28,7 @@ void output_UART(char c) {
 }
 
 
-void print(char* word) {
+void printw(char* word) {
     int char_count;
     while (*word != '\0') {
         char_count = 0;
@@ -42,6 +42,36 @@ void print(char* word) {
 }
 
 void println(char* word) {
-    print(word);
+    printw(word);
     output_UART('\n');
 }
+
+void print_u32(uint32 num) {
+    char space[11];
+    space[10] = 0;
+    char *word = &(space[9]);
+    uint32 digit = 0;
+    while (num != 0) {
+      digit = num % 10;
+      word--;
+      *word = 48 + digit;
+      num = (num - digit) / 10;
+      }
+    printw(word);
+}
+
+void print_u64(uint64 num) {
+    char space[21];
+    space[20] = 0;
+    char *word = &(space[19]);
+    uint32 digit = 0;
+    while (num != 0) {
+      digit = num % 10;
+      word--;
+      *word = 48 + digit;
+      num = (num - digit) / 10;
+      }
+    printw(word);
+}
+
+

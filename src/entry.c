@@ -1,4 +1,5 @@
 #include "parser.c"
+#include "irq.c"
 
 void terminate(void) {
     volatile int *addr = (int*) 0x100000;
@@ -6,8 +7,7 @@ void terminate(void) {
 }
 
 void c_entry(void) {
-    char* word = "HelloWorld";
-    println(word);
+    set_irq();
     terminate();
 }
 
