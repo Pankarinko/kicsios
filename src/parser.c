@@ -76,6 +76,14 @@ void print_u64(uint64 num) {
     printw(word);
 }
 
+void printu(usize num) {
+  if (__INTPTR_WIDTH__ >= 64) {
+      print_u64((uint64) num);
+  } else {
+      print_u32((uint32) num)
+  }
+}
+
 int clz32(uint32 v) {
 
   int r;      // result goes here
@@ -99,8 +107,7 @@ int clz32(uint32 v) {
 int clz64(uint64 v) {
   uint32 upp = (uint32) (v >> 32);
   if (upp == 0) {
-    int r = clz32((uint32) v);
-    
+    int r = clz32((uint32) v); 
     return 32 + r;
   } else {
     return clz32(upp);
@@ -144,6 +151,14 @@ void print_hex64(uint64 num) {
         output_UART(c);
           } 
       num2 = num2 << shift;
+  }
+}
+
+void print_hex(usize num) {
+  if (__INTPTR_WIDTH__ >= 64) {
+      print_hex64((uint64) num);
+  } else {
+      print_hex32((uint32) num)
   }
 }
 
