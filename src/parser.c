@@ -32,12 +32,13 @@ void printw(char* word) {
     int char_count;
     while (*word != '\0') {
         char_count = 0;
-        if (LSR != UART_LSR_THR_EMPTY)
+        if (LSR != UART_LSR_THR_EMPTY) {
             while (char_count < 14) {
                 output_UART((uint8) *word);
                 word++;
                 if (*word == '\0') return;
             }
+        }
     }
 }
 
@@ -63,7 +64,8 @@ void print_u32(uint32 num) {
 void print_u64(uint64 num) {
     char space[21];
     space[20] = 0;
-    char *word = &(space[19]);
+    space[19] = 48;
+    char *word = &(space[20]);
     uint32 digit = 0;
     while (num != 0) {
       digit = num % 10;
@@ -73,5 +75,80 @@ void print_u64(uint64 num) {
       }
     printw(word);
 }
+
+int clz32(uint32 v) {
+
+  int r;      // result goes here
+
+  static const int MultiplyDeBruijnBitPosition[32] = 
+    {
+    0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
+    8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
+    };
+
+    v |= v >> 1; // first round down to one less than a power of 2 
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+
+    r = MultiplyDeBruijnBitPosition[(uint32)(v * 0x07C4ACDDU) >> 27];
+  return 32 - r - 1;
+}
+
+int clz64(uint64 v) {
+  uint32 upp = (uint32) (v >> 32);
+  if (upp == 0) {
+    int r = clz32((uint32) v);
+    
+    return 32 + r;
+  } else {
+    return clz32(upp);
+  }
+}
+
+void print_hex32(uint32 num) {
+    char c = 0;
+    uint32 num2 = num;
+    int shift = 4;
+    uint8 lead = 0;
+    while (num2 != 0ull) {
+      num = num2 >> 28;
+      if (num != 0) lead = 1;
+      if (lead != 0) {
+          if (num < 10) {
+            c = 48 + num;
+          } else {
+            c = 65 + (num - 10);
+          }
+        output_UART(c);
+          } 
+      num2 = num2 << shift;
+  }
+}
+
+void print_hex64(uint64 num) {
+    char c = 0;
+    uint64 num2 = num;
+    int shift = 4;
+    uint8 lead = 0;
+    while (num2 != 0ull) {
+      num = num2 >> 60;
+      if (num != 0) lead = 1;
+      if (lead != 0) {
+          if (num < 10) {
+            c = 48 + num;
+          } else {
+            c = 65 + (num - 10);
+          }
+        output_UART(c);
+          } 
+      num2 = num2 << shift;
+  }
+}
+
+  
+  
+
 
 

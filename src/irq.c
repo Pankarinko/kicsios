@@ -8,5 +8,7 @@ void set_irq(void) {
   asm("csrrw x0, mtvec, %0"
       : 
       : "r" (irq_addr));
-  print_u64((uint64) *irq_addr);
+      
+  //print_u64((uint64) irq_addr);
+  //print_hex64((uint64) irq_addr);
 }
