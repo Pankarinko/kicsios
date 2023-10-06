@@ -28,7 +28,7 @@ void output_UART(char c) {
 }
 
 
-void printw(char* word) {
+void prints(char* word) {
     int char_count;
     while (*word != '\0') {
         char_count = 0;
@@ -43,7 +43,7 @@ void printw(char* word) {
 }
 
 void println(char* word) {
-    printw(word);
+    prints(word);
     output_UART('\n');
 }
 
@@ -58,7 +58,7 @@ void print_u32(uint32 num) {
       *word = 48 + digit;
       num = (num - digit) / 10;
       }
-    printw(word);
+    prints(word);
 }
 
 void print_u64(uint64 num) {
@@ -73,14 +73,14 @@ void print_u64(uint64 num) {
       *word = 48 + digit;
       num = (num - digit) / 10;
       }
-    printw(word);
+    prints(word);
 }
 
 void printu(usize num) {
   if (__INTPTR_WIDTH__ >= 64) {
       print_u64((uint64) num);
   } else {
-      print_u32((uint32) num)
+      print_u32((uint32) num);
   }
 }
 
@@ -115,42 +115,42 @@ int clz64(uint64 v) {
 }
 
 void print_hex32(uint32 num) {
-    char c = 0;
-    uint32 num2 = num;
-    int shift = 4;
-    uint8 lead = 0;
-    while (num2 != 0ull) {
-      num = num2 >> 28;
-      if (num != 0) lead = 1;
-      if (lead != 0) {
-          if (num < 10) {
-            c = 48 + num;
-          } else {
-            c = 65 + (num - 10);
-          }
-        output_UART(c);
-          } 
-      num2 = num2 << shift;
+  char c = 0;
+  uint32 num2 = num;
+  int shift = 4;
+  uint8 lead = 0;
+  while (num2 != 0ull) {
+    num = num2 >> 28;
+    if (num != 0) lead = 1;
+    if (lead != 0) {
+        if (num < 10) {
+          c = 48 + num;
+        } else {
+          c = 65 + (num - 10);
+        }
+      output_UART(c);
+    } 
+    num2 = num2 << shift;
   }
 }
 
 void print_hex64(uint64 num) {
-    char c = 0;
-    uint64 num2 = num;
-    int shift = 4;
-    uint8 lead = 0;
-    while (num2 != 0ull) {
-      num = num2 >> 60;
-      if (num != 0) lead = 1;
-      if (lead != 0) {
-          if (num < 10) {
-            c = 48 + num;
-          } else {
-            c = 65 + (num - 10);
-          }
-        output_UART(c);
-          } 
-      num2 = num2 << shift;
+  char c = 0;
+  uint64 num2 = num;
+  int shift = 4;
+  uint8 lead = 0;
+  while (num2 != 0ull) {
+    num = num2 >> 60;
+    if (num != 0) lead = 1;
+    if (lead != 0) {
+      if (num < 10) {
+        c = 48 + num;
+      } else {
+        c = 65 + (num - 10);
+      }
+      output_UART(c);
+    }
+    num2 = num2 << shift;
   }
 }
 
@@ -158,12 +158,6 @@ void print_hex(usize num) {
   if (__INTPTR_WIDTH__ >= 64) {
       print_hex64((uint64) num);
   } else {
-      print_hex32((uint32) num)
+      print_hex32((uint32) num);
   }
 }
-
-  
-  
-
-
-

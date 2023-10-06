@@ -1,5 +1,6 @@
-#include "parser.c"
-#include "irq.c"
+#include "kstd.h"
+
+void set_irq();
 
 void terminate(void) {
     volatile int *addr = (int*) 0x100000;
@@ -8,6 +9,7 @@ void terminate(void) {
 
 void c_entry(void) {
     set_irq();
+    asm("ebreak");
     terminate();
 }
 
