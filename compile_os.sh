@@ -1,9 +1,29 @@
 #! /usr/bin/bash
 
+if [ "$1" = 32 ]; then
+	bits=32
+	abi=ilp32f
+	arch=rv32g
+else
+	bits=64
+	abi=lp64f
+	arch=rv64g
+fi
+
+archabi="-march=$arch -mabi=$abi"
+
+set -e
+
 mkdir -p build
 
-riscv64-unknown-elf-gcc -O3 -nostdlib -nostartfiles -march=rv64g -mabi=lp64 -mcmodel=medany -fvisibility=hidden -c src/entry.S -o build/asm_entry.o
+for i in src/*.c
+do
+	riscv"$bits"-unknown-elf-gcc -O0 -nostdlib -nostartfiles $archabi -mcmodel=medany -c "$i" -o build/"$(basename $i .c)".o
+done
 
-riscv64-unknown-elf-gcc -O3 -nostdlib -nostartfiles -march=rv64g -mabi=lp64 -mcmodel=medany -fvisibility=hidden -c src/entry.c -o build/c_entry.o
+for i in src/*.S
+do
+	riscv"$bits"-unknown-elf-gcc -O0 -nostdlib -nostartfiles $archabi -mcmodel=medany -c "$i" -o build/asm_"$(basename $i .S)".o
+done
 
-riscv64-unknown-elf-gcc -O3 -nostdlib -nostartfiles -march=rv64g -mabi=lp64 -mcmodel=medany -fvisibility=hidden -T script.ld build/*.o -o kernel
+riscv"$bits"-unknown-elf-gcc -O0 -nostdlib -nostartfiles $archabi -mcmodel=medany -T script.ld build/*.o -o kernel
