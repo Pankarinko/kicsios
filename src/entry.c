@@ -9,7 +9,9 @@ void terminate(void) {
 
 void c_entry(void) {
     set_irq();
-    asm("ebreak");
+    int uwu = 1;
+    asm("jalr 0(%0)" 
+        :"=r" (uwu));
     terminate();
 }
 
