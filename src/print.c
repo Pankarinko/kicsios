@@ -48,13 +48,17 @@ void println(char* word) {
 }
 
 void print_u32(uint32 num) {
+    if (num == 0) {
+         output_UART('0');
+         return;
+    }
     char space[11];
     space[10] = 0;
     char *word = &(space[9]);
     uint32 digit = 0;
     while (num != 0) {
       digit = num % 10;
-      word--;
+       word--;
       *word = 48 + digit;
       num = (num - digit) / 10;
       }
@@ -62,15 +66,19 @@ void print_u32(uint32 num) {
 }
 
 void print_u64(uint64 num) {
+    if (num == 0) {
+         output_UART('0');
+         return;
+    }
     char space[21];
     space[20] = 0;
     space[19] = 48;
     char *word = &(space[20]);
     uint32 digit = 0;
-    while (num != 0) {
+    while (num != 0ull) {
       digit = num % 10;
       word--;
-      *word = 48 + digit;
+      *word = 48 + digit;  
       num = (num - digit) / 10;
       }
     prints(word);
@@ -115,7 +123,13 @@ int clz64(uint64 v) {
 }
 
 void print_hex32(uint32 num) {
-  char c = 0;
+  char c = 48;
+  output_UART('0');
+  output_UART('x');
+  if (num == 0) {
+      output_UART(c);
+      return;
+    } 
   uint32 num2 = num;
   int shift = 4;
   uint8 lead = 0;
@@ -135,7 +149,13 @@ void print_hex32(uint32 num) {
 }
 
 void print_hex64(uint64 num) {
-  char c = 0;
+  char c = 48;
+  output_UART('0');
+  output_UART('x');
+   if (num == 0) {
+      output_UART(c);
+      return;
+    } 
   uint64 num2 = num;
   int shift = 4;
   uint8 lead = 0;
