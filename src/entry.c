@@ -9,9 +9,10 @@ void terminate(void) {
 
 void c_entry(void) {
     set_irq();
-    int uwu = 1;
-    asm("jalr 0(%0)" 
-        :"=r" (uwu));
+    int uwu = 0x12345;
+     asm volatile("jalr 0(%0)" 
+        :
+        :"r" (uwu));
     terminate();
 }
 
