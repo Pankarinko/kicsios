@@ -18,6 +18,15 @@ void print_hex32(uint32 num);
 void print_hex64(uint64 num);
 void print_hex(usize num);
 
+//Print functions dependent on architecture
+#if ARCHSIZE == 32
+#define PRINTHEX(num) print_hex32((uint32) num)
+#define PRINTU(num) print_u32((uint32) num)
+#else
+#define PRINTHEX(num) print_hex64((uint64) num)
+#define PRINTU(num) print_u64((uint64) num)
+#endif
+
 // Bit operations
 int clz32(uint32 v); // Counts leading zeros for 32bit values
 int clz64(uint64 v); // Counts leading zeros for 64bit values

@@ -1,4 +1,5 @@
 #include "kstd.h"
+#include "vma.h"
 
 void set_irq();
 
@@ -9,10 +10,7 @@ void terminate(void) {
 
 void c_entry(void) {
     set_irq();
-    int uwu = 0x12345;
-     asm volatile("jalr 0(%0)" 
-        :
-        :"r" (uwu));
+    set_root_page_table();
     terminate();
 }
 

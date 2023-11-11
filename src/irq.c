@@ -90,10 +90,6 @@ void irq_handler(void) {
   }
 }
 
-void test(void) {
-  println("Interrupt ende");
-}
-
 void set_irq(void) {
   void (*irq_addr)(void) = &trap_vector;
   asm("csrrw zero, mtvec, %0"

@@ -85,11 +85,7 @@ void print_u64(uint64 num) {
 }
 
 void printu(usize num) {
-  if (__INTPTR_WIDTH__ >= 64) {
-      print_u64((uint64) num);
-  } else {
-      print_u32((uint32) num);
-  }
+  PRINTU(num);
 }
 
 int clz32(uint32 v) {
@@ -133,7 +129,7 @@ void print_hex32(uint32 num) {
   uint32 num2 = num;
   int shift = 4;
   uint8 lead = 0;
-  while (num2 != 0ull) {
+   for (uint8 i = 0; i < 8; i++) {
     num = num2 >> 28;
     if (num != 0) lead = 1;
     if (lead != 0) {
@@ -159,9 +155,9 @@ void print_hex64(uint64 num) {
   uint64 num2 = num;
   int shift = 4;
   uint8 lead = 0;
-  while (num2 != 0ull) {
+  for (uint8 i = 0; i < 16; i++) {
     num = num2 >> 60;
-    if (num != 0) lead = 1;
+    if (num != 0ull) lead = 1;
     if (lead != 0) {
       if (num < 10) {
         c = 48 + num;
@@ -175,9 +171,5 @@ void print_hex64(uint64 num) {
 }
 
 void print_hex(usize num) {
-  if (__INTPTR_WIDTH__ >= 64) {
-      print_hex64((uint64) num);
-  } else {
-      print_hex32((uint32) num);
-  }
+    PRINTHEX(num);
 }

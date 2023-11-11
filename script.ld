@@ -17,4 +17,5 @@ SECTIONS {
     *(.text*)
  } > RAM : text
 
+PROVIDE(endkernel = .);
 }
