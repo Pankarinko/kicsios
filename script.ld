@@ -13,9 +13,9 @@ PHDRS {
 SECTIONS {
  .text : {
     . = ALIGN(8);
+    PROVIDE(startkernel = .);
     *(.text)
     *(.text*)
+    PROVIDE(endkernel = .);
  } > RAM : text
-
-PROVIDE(endkernel = .);
 }
