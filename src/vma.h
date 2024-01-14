@@ -2,9 +2,15 @@
 #define _VMA_INCLUDE
 
 extern char endkernel[];
+extern char startkernel[];
 
-#define PAGESIZE (1 << 12) 
+#define PAGESIZE (1ull << 12) 
 typedef __UINTPTR_TYPE__ ptetype; 
+
+#define MEMORYSTART startkernel
+//TODO set this later! 
+#define MEMORYSIZE 512 * PAGESIZE 
+
 
 //Mode settings
 #define SV32 1ull
@@ -26,9 +32,14 @@ typedef __UINTPTR_TYPE__ ptetype;
 #if ARCHSIZE == 32
 #define VPNSIZE 10ull
 #define LEVELS 2ull
+// How many bits to shift when accessessing page table address recursively
+#define PTE_LOG 2 
+#define MAXADDRESS 1023
 #else
 #define VPNSIZE 9ull
 #define LEVELS 4ull
+#define PTE_LOG 3
+#define MAXADDRESS 511
 #endif
 
 
@@ -44,13 +55,14 @@ typedef __UINTPTR_TYPE__ ptetype;
 
 //PTEs
 #if ARCHSIZE == 32
-#define SET_ROOT (((SV32) << 31) | (ASID << 22) | (ROUNDUP_PAGE >> 12))
+#define SET_ROOT (((SV32) << 31) | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #else
-#define SET_ROOT (((SV48) << 60) | (ASID << 44) | (ROUNDUP_PAGE >> 12))
+#define SET_ROOT (((SV48) << 60) | (ASID << 44) | (ROUNDUP_PAGE(endkernel) >> 12))
 #endif
 
 //Page table setting functions
 void set_root_page_table();
 void initialize_vm(void);
+void zero_page(usize *page);
 
 #endif

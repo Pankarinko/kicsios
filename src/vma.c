@@ -2,50 +2,48 @@
 #include "kstd.h"
 #include "alloc.h"
 
-
 usize *root_page_table;
 
 void set_root_page_table(void) {
     usize root_page_table = ROOT_PAGE_TABLE;
+    // TODO recursion
     usize set_satp = SET_ROOT;
-    print_hex((usize) endkernel);
-    println("");
-    print_hex(root_page_table);
     asm ("csrrw zero, satp, %0"
-          :
-          : "r" (root_page_table));
+        :
+        : "r" (root_page_table));
 }
 
-//Initialize page tables with zeros
+// Initialize page tables with zeros
 void initialize_vm(void) {
-    initialize_page(root_page_table);´98432
+    zero_page(root_page_table);
+}
+
+void zero_page(usize *page) {
+    for (usize *copy_root = page; copy_root < page + (PAGESIZE / sizeof(ptetype)); copy_root++) {
+        *copy_root = 0;
     }
 }
 
-void initialize_page(usize *page) {
-   for (usize *copy_root = page; copy_root < page + (PGAESIZE / sizeof(ptetype)); copy_root++) {
-        *copy_root = 0;
-   +p  }
+int set_pte_bits(ptetype pte) {
+    
 }
 
-int check_pte_validity(ptetype pte) {
-  //TODO
-}
-
-void map_page(usize va, ptetype pte) {
-      usize *current_pte;
-      usize rootcopy = root_page_table;
-      usize vacopy = va;
-      for (int i = LEVELS - 1 ; i > 0; i--) {
-        current_pte = rootcopy + (vacopy >> (12 + (LEVELS - i + 1);
-      
-        if (!(*current_pte & VALID)) {
-            initialize_page();
-         }
-        
-        //Delete first VPNSIZE bits
-        vacopy = va;
-        vacopy = (vacopy << VPNSIZE) << VPNSIZE;
+void map_page(usize va) {
+    ptetype *t_addr = ~(PAGESIZE - 1);
+    for (uint8 lev = 0; lev < LEVELS - 1; lev++) {
+      t_addr =(usize) t_addr << (lev * VPNSIZE) | (va >> (12 + (LEVELS - 1 -lev) * VPNSIZE)) << PTE_LOG;
+      if (!(*t_addr & VALID)) {
+        talloc(set_pte_bits(*(ptetype*)t_addr)); // TODO function to set pte bits
       }
+    }
+    palloc(va);
+
 }
 
+// TODO unmap with reading the physical address first and then calling free
+int unmap_page(usize va) {
+    ptetype *p_addr =( ~(PAGESIZE - 1) << ( VPNSIZE * (LEVELS - 1))) | ((va >> PAGESIZE) << PTE_LOG);
+    zero_page(&va);
+   *p_addr &= (!VALID);
+    pfree(va,(usize) (p_addr &  ~(PAGESIZE - 1)));
+}
