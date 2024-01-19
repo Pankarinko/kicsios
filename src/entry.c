@@ -12,9 +12,8 @@ void terminate(void) {
 void c_entry(void) {
     set_irq();
     //set_root_page_table();
-    usize vpn = (1 << 22);
-    int level = 1;
-    vpn = (MAXADDRESS << 12 + LEVELS - level) | (vpn >> (level * VPNSIZE));
+    set_root_page_table_init();
+    
     print_hex(vpn);
     terminate();
 }

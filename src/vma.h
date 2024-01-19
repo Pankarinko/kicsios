@@ -54,6 +54,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define ROOT_PAGE_TABLE ROUNDUP_PAGE(endkernel)
 
 //PTEs
+#define SET_ROOT_INIT (0 | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #if ARCHSIZE == 32
 #define SET_ROOT (((SV32) << 31) | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #else

@@ -4,18 +4,28 @@
 
 usize *root_page_table;
 
-void set_root_page_table(void) {
+int initialize_vm() {
+    set_root_page_table_init();
+    createfreelist();
+    map_kernel();
+    set_root_page_table();
+}
+
+void set_root_page_table_init(void) {
     usize root_page_table = ROOT_PAGE_TABLE;
     // TODO recursion
+    usize set_satp = SET_ROOT_INIT;
+    asm ("csrrw zero, satp, %0"
+        :
+        : "r" (root_page_table));
+     zero_page(root_page_table);
+}
+
+void set_root_page_table(void) {
     usize set_satp = SET_ROOT;
     asm ("csrrw zero, satp, %0"
         :
         : "r" (root_page_table));
-}
-
-// Initialize page tables with zeros
-void initialize_vm(void) {
-    zero_page(root_page_table);
 }
 
 void zero_page(usize *page) {
@@ -24,8 +34,16 @@ void zero_page(usize *page) {
     }
 }
 
-
-
+void map_kernel() {
+    usize kernel_pages = ROUNDDOWN_PAGE(endkernel) - ROUNDDOWN_PAGE(startkernel);
+    if (kernel_pages % PAGESIZE) {
+    } else {
+        kernel_pages = kernel_pages / PAGESIZE + 1;
+    }
+    for (usize i = 0; i < kernel_pages; i++) {
+        map_page((usize) (ROUNDDOWN_PAGE(startkernel) + (i * PAGESIZE)));
+    }
+}
 void map_page(usize va) {
     ptetype *t_addr = ~(PAGESIZE - 1);
     for (uint8 lev = 0; lev < LEVELS - 1; lev++) {
