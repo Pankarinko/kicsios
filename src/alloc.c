@@ -19,7 +19,8 @@ int talloc(usize vpn) {
     if (!(firstfree << 10)) {
         return -1;
     }
-    *(usize*)vpn = firstfree | VALID;
+
+    *(usize*)vpn = firstfree | VALID | GLOBAL;
     firstfree = *(usize*)(vpn << 12);
     if (!firstfree) {
         return -1;
@@ -31,7 +32,7 @@ usize palloc(usize vpn) {
         if (!(firstfree << 10)) {
         return -1;
     }
-    *(usize*)vpn = firstfree | READ;
+    *(usize*)vpn = firstfree | READ | WRITE | EXECUTE| GLOBAL;
     firstfree = *(usize*)(vpn << 12);
     if (!firstfree) {
         return -1;

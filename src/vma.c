@@ -24,26 +24,24 @@ void zero_page(usize *page) {
     }
 }
 
-int set_pte_bits(ptetype pte) {
-    
-}
+
 
 void map_page(usize va) {
     ptetype *t_addr = ~(PAGESIZE - 1);
     for (uint8 lev = 0; lev < LEVELS - 1; lev++) {
       t_addr =(usize) t_addr << (lev * VPNSIZE) | (va >> (12 + (LEVELS - 1 -lev) * VPNSIZE)) << PTE_LOG;
       if (!(*t_addr & VALID)) {
-        talloc(set_pte_bits(*(ptetype*)t_addr)); // TODO function to set pte bits
+        talloc(t_addr); // TODO function to set pte bits
       }
     }
     palloc(va);
 
 }
 
-// TODO unmap with reading the physical address first and then calling free
+
 int unmap_page(usize va) {
     ptetype *p_addr =( ~(PAGESIZE - 1) << ( VPNSIZE * (LEVELS - 1))) | ((va >> PAGESIZE) << PTE_LOG);
     zero_page(&va);
    *p_addr &= (!VALID);
-    pfree(va,(usize) (p_addr &  ~(PAGESIZE - 1)));
+    pfree(va,((usize)p_addr &  ~(PAGESIZE - 1)));
 }
