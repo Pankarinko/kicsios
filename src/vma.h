@@ -10,6 +10,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define MEMORYSTART startkernel
 //TODO set this later! 
 #define MEMORYSIZE 512 * PAGESIZE 
+#define NO_NEXT_FREE_PAGE 1ull
 
 
 //Mode settings
@@ -54,7 +55,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define ROOT_PAGE_TABLE ROUNDUP_PAGE(endkernel)
 
 //PTEs
-#define SET_ROOT_INIT (0 | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
+#define SET_ROOT_BARE (0 | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #if ARCHSIZE == 32
 #define SET_ROOT (((SV32) << 31) | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #else
