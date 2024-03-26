@@ -31,24 +31,27 @@ void setmode(void) {
 }
 
 void zero_page(usize *page) {
-    for (usize *copy_root = page; copy_root < page + (PAGESIZE / sizeof(pte)); copy_root++) {
+    for (usize *copy_root = page; copy_root < (usize*)((usize)page + PAGESIZE); copy_root++) {
         *copy_root = 0;
     }
 }
 
-#define 1 T
-#define 0 P
+#define T 1
+#define P 0
 
 void map_page(usize va) {
-    usize page_beginning = ROUNDDOWN_PAGE(va);
-    ptetype *t_addr = ~(PAGESIZE - 1);
-    for (uint8 lev = 0; lev < LEVELS - 1; lev++) {
-      t_addr =(usize) t_addr << (lev * VPNSIZE) | (va >> (12 + (LEVELS - 1 -lev) * VPNSIZE)) << PTE_LOG;
-      if (!(*t_addr & VALID)) {
-        p_alloc(t_addr, T);
-      }
+    ptetype page_addr = (ptetype) ROUNDDOWN_PAGE(va);
+    ptetype current_page_table = root_page_table;
+
+    for (uint8 lev = LEVELS - 1; lev > 0 ; lev++) {
+        ptetype tmp_page_addr = (page_addr >> ((lev + 1) * VPNSIZE)) & (MAXPTE << PTE_LOG);
+        ptetype pte = (*((usize*)(current_page_table + tmp_page_addr)));
+        
+        if (!(pte & VALID)) {
+            p_alloc(current_page_table, T);
+        }
+        // TODO set current_page_table
     }
-     p_alloc(t_addr, P);
 }
 
 void map_kernel() {

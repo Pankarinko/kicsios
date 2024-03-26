@@ -5,6 +5,7 @@ extern char endkernel[];
 extern char startkernel[];
 
 #define PAGESIZE (1ull << 12) 
+#define PAGE_LOG 12
 typedef __UINTPTR_TYPE__ ptetype; 
 
 #define MEMORYSTART startkernel
@@ -35,12 +36,12 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define LEVELS 2ull
 // How many bits to shift when accessessing page table address recursively
 #define PTE_LOG 2 
-#define MAXADDRESS 1023
+#define MAXPTE 1023
 #else
 #define VPNSIZE 9ull
 #define LEVELS 4ull
 #define PTE_LOG 3
-#define MAXADDRESS 511
+#define MAXPTE 511
 #endif
 
 
