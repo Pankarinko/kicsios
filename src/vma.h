@@ -30,19 +30,26 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define ACCESSED 64ull
 #define DIRTY 128ull
 
+#define FLAG_BITS 10
+
 //Architecture table parameters
 #if ARCHSIZE == 32
 #define VPNSIZE 10ull
+#define PPNSIZE 34ull
 #define LEVELS 2ull
 // How many bits to shift when accessessing page table address recursively
 #define PTE_LOG 2 
 #define MAXPTE 1023
+#define USELESS_BITS_IN_PTE 0
 #else
 #define VPNSIZE 9ull
-#define LEVELS 4ull
+#define PPNSIZE 44ull
+#define LEVELS 3ull
 #define PTE_LOG 3
 #define MAXPTE 511
+#define USELESS_BITS_IN_PTE 10
 #endif
+
 
 
 //ASID Settings (temporary)
@@ -60,7 +67,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 #if ARCHSIZE == 32
 #define SET_ROOT (((SV32) << 31) | (ASID << 22) | (ROUNDUP_PAGE(endkernel) >> 12))
 #else
-#define SET_ROOT (((SV48) << 60) | (ASID << 44) | (ROUNDUP_PAGE(endkernel) >> 12))
+#define SET_ROOT (((SV39) << 60) | (ASID << 44) | (ROUNDUP_PAGE(endkernel) >> 12))
 #endif
 
 //Page table setting functions

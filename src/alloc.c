@@ -9,7 +9,6 @@
 usize firstfree;
 
 // For this method, we need to set satp_mode to BARE
-// TODO shift every firstfree
 void createfreelist(void) {
     firstfree = (ROOT_PAGE_TABLE) >> PAGE_LOG;
     usize i;
@@ -21,18 +20,19 @@ void createfreelist(void) {
 
 
 //Following methods are for satp_mode SVXX
-usize p_alloc(usize vpn, uint table) {
+usize p_alloc(usize table) {
+    usize vpn;
     if (table) {
-        *(usize*)vpn = (firstfree | VALID | GLOBAL);
+        usize vpn = ((firstfree << FLAG_BITS) | VALID | GLOBAL);
     } else {
-        *(usize*)vpn = (firstfree | READ | WRITE | EXECUTE | VALID | GLOBAL);
+        usize vpn = ((firstfree << FLAG_BITS) | READ | WRITE | EXECUTE | VALID | GLOBAL);
     }
-    return 0;
+    return vpn;
 }
 
 int pfree(usize vpn, usize ppn) {
 
     *(usize*)vpn = firstfree;
     firstfree = ppn;
- }
+}
 

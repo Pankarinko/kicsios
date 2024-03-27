@@ -19,7 +19,7 @@ void set_root_page_table_bare(void) {
     asm ("csrrw zero, satp, %0"
         :
         : "r" (root_page_table));
-     zero_page(root_page_table);
+    zero_page(root_page_table);
 }
 
 // Should only be called after the kernel is mapped
@@ -39,19 +39,23 @@ void zero_page(usize *page) {
 #define T 1
 #define P 0
 
+
 void map_page(usize va) {
     ptetype page_addr = (ptetype) ROUNDDOWN_PAGE(va);
     ptetype current_page_table = root_page_table;
 
     for (uint8 lev = LEVELS - 1; lev > 0 ; lev++) {
         ptetype tmp_page_addr = (page_addr >> ((lev + 1) * VPNSIZE)) & (MAXPTE << PTE_LOG);
-        ptetype pte = (*((usize*)(current_page_table + tmp_page_addr)));
+        ptetype pte = *(usize*)(current_page_table + tmp_page_addr);
         
         if (!(pte & VALID)) {
-            p_alloc(current_page_table, T);
+            pte = p_alloc(T);
+            *(usize*)(current_page_table + tmp_page_addr) = pte;
         }
-        // TODO set current_page_table
+        current_page_table = pte ;
     }
+    /*TODO recursive page tables
+    */
 }
 
 void map_kernel() {
@@ -64,6 +68,6 @@ void map_kernel() {
 int unmap_page(usize va) {
     ptetype *p_addr =( ~(PAGESIZE - 1) << ( VPNSIZE * (LEVELS - 1))) | ((va >> PAGESIZE) << PTE_LOG);
     zero_page(&va);
-   *p_addr &= (!VALID);
+    *p_addr &= (!VALID);
     pfree(va,((usize)p_addr &  ~(PAGESIZE - 1)));
 }
