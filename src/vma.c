@@ -57,7 +57,7 @@ void map_tables() {
             if (page_table_address + PAGESIZE <= MEMORYSIZE) {
             // TODO something on error
             }
-            *pte = (ptetype) page_table_address | GLOBAL | VALID;
+            *pte = (ptetype) ((page_table_address >> 12) << 2) | GLOBAL | VALID;
             page_table_address += PAGESIZE;
             pte += 1;
         }
@@ -71,7 +71,7 @@ void map_page(usize va) {
     usize *address = ROOT_PAGE_TABLE;
     usize pt_index = 0;
     for (usize level = LEVELS; level > 1; level--) {
-        pt_index = (va >> (level)) & (MAXPTE << PTE_LOG); 
+        pt_index = ((ADRESS_MASK & va) >> (level)) & (MAXPTE << PTE_LOG); 
         usize *address = *(usize*) (address + pt_index); //This still needs shifting somebits
     }
     *(ptetype*) address = va | READ | WRITE | EXECUTE | VALID | GLOBAL; 

@@ -31,6 +31,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 #define DIRTY 128ull
 
 #define FLAG_BITS 10
+#define ADRESS_MASK (0xffff) & ((1 << PPNSIZE) - 1)
 
 //Architecture table parameters
 #if ARCHSIZE == 32
