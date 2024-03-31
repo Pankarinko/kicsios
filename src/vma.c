@@ -13,7 +13,7 @@ int initialize_vm() {
     set_root_page_table_bare();
     createfreelist();
     map_kernel();
-    setmode();
+    set_mode();
 }
 
 // Used for initializing the mapping
@@ -27,7 +27,7 @@ void set_root_page_table_bare(void) {
 }
 
 // Should only be called after the kernel is mapped
-void setmode(void) {
+void set_mode(void) {
     usize set_satp = SET_ROOT;
     asm ("csrrw zero, satp, %0"
         :
@@ -72,14 +72,14 @@ void map_page(usize va) {
     usize pt_index = 0;
     for (usize level = LEVELS; level > 1; level--) {
         pt_index = ((ADRESS_MASK & va) >> (level)) & (MAXPTE << PTE_LOG); 
-        usize *address = *(usize*) (address + pt_index); //This still needs shifting somebits
+        usize *address = (usize*)((((ssize)(*(usize*) (address + pt_index)) << PPN_TO_VPN_MASK) << PPN_TO_VPN_MASK) & ~(1 << FLAG_BITS));
     }
-    *(ptetype*) address = va | READ | WRITE | EXECUTE | VALID | GLOBAL; 
+    *(ptetype*) address = translate_address(va) | READ | WRITE | EXECUTE | VALID | GLOBAL;
 }
 
 // This is right now an identity function but who knows what happens later
 usize translate_address(usize va) {
-    return va;
+    return ((va << PPN_TO_VPN_MASK) >> PPN_TO_VPN_MASK);
 }
 
 /*void map_page(usize va) {

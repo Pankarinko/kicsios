@@ -5,7 +5,8 @@
 typedef __UINT8_TYPE__ uint8;
 typedef __UINT32_TYPE__ uint32;
 typedef __UINT64_TYPE__ uint64;
-typedef __UINTPTR_TYPE__ usize; // Integer in size of architecture
+typedef __UINTPTR_TYPE__ usize; // Unsigned integer in size of architecture
+typedef __INTPTR_TYPE__ ssize; // Signed integer in the size of the architectur
 #define ARCHSIZE __INTPTR_WIDTH__ // Size of architecture
 
 // Print functions
