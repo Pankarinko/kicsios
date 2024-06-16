@@ -1,6 +1,7 @@
 #ifndef _VMA_INCLUDE
 #define _VMA_INCLUDE
 
+#include "kstd.h"
 extern char endkernel[];
 extern char startkernel[];
 
@@ -33,7 +34,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 // How many flag bits a PTE has (useful for shifts)
 #define FLAG_BITS 10
 // ??
-#define ADRESS_MASK ((1 << PPNSIZE) - 1)
+#define ADDRESS_MASK (((usize) 1 << PPNSIZE) - 1)
 
 //Architecture table parameters
 #if ARCHSIZE == 32
@@ -61,7 +62,7 @@ typedef __UINTPTR_TYPE__ ptetype;
 
 //Adresses
 #define ROUNDUP_PAGE(address) (((usize) (address) + (usize)(PAGESIZE - 1)) & ~(usize)(PAGESIZE - 1))
-#define ROUNDDOWN_PAGE(address) ((usize) (address) & ~(usize)(PAGESIZE - 1));
+#define ROUNDDOWN_PAGE(address) ((usize) (address) & ~(usize)(PAGESIZE - 1))
 
 #define ROOT_PAGE_TABLE ROUNDUP_PAGE(endkernel)
 
@@ -76,10 +77,12 @@ typedef __UINTPTR_TYPE__ ptetype;
 //Page table setting functions
 void set_root_page_table();
 void set_root_page_table_bare();
+void set_mode(void);
 void initialize_vm(void);
 void zero_page(usize *page);
 void map_tables();
 void map_page(usize va);
+void map_kernel();
 usize translate_address(usize va);
 
 

@@ -9,7 +9,7 @@ Caution! It contains the PPN not the whole physical address (physical_address >>
 */
 usize *first_free_ppn;
 
-int initialize_vm() {
+void initialize_vm(void) {
     set_root_page_table_bare();
     createfreelist();
     map_kernel();
@@ -23,7 +23,7 @@ void set_root_page_table_bare(void) {
     asm ("csrrw zero, satp, %0"
         :
         : "r" (set_satp));
-    zero_page(root_page_table);
+    zero_page((usize*) root_page_table);
 }
 
 // Should only be called after the kernel is mapped
@@ -43,7 +43,7 @@ void zero_page(usize *page) {
 // Mapping the whole physical address space from 0x8000
 // This has to be done in BARE mode
 void map_tables() {
-    ptetype *pte = ROOT_PAGE_TABLE;
+    ptetype *pte = (ptetype*) ROOT_PAGE_TABLE;
     usize page_table_address = ROOT_PAGE_TABLE + PAGESIZE;
     usize number_of_tables = (1 << VPNSIZE);
     for (usize level = 0; level < LEVELS - 1; level++) {
@@ -63,15 +63,15 @@ void map_tables() {
         }
         number_of_tables *= number_of_tables;
     }
-    first_free_ppn = page_table_address >> 12;
+    first_free_ppn = (unsigned long*) (page_table_address >> 12);
 }
 
 // This function should only be called AFTER map_tables()
 void map_page(usize va) {
-    usize *address = ROOT_PAGE_TABLE;
+    usize *address = (usize*) ROOT_PAGE_TABLE;
     usize pt_index = 0;
     for (usize level = LEVELS; level > 1; level--) {
-        pt_index = ((ADRESS_MASK & va) >> (level)) & (MAXPTE << PTE_LOG); 
+        pt_index = ((ADDRESS_MASK & va) >> (level)) & (MAXPTE << PTE_LOG); 
         usize *address = (usize*)((((ssize)(*(usize*) (address + pt_index)) << PPN_TO_VPN_MASK) << PPN_TO_VPN_MASK) & ~(1 << FLAG_BITS));
     }
     *(ptetype*) address = translate_address(va) | READ | WRITE | EXECUTE | VALID | GLOBAL;
@@ -82,31 +82,16 @@ usize translate_address(usize va) {
     return ((va << PPN_TO_VPN_MASK) >> PPN_TO_VPN_MASK);
 }
 
-/*void map_page(usize va) {
-    ptetype page_addr = (ptetype) ROUNDDOWN_PAGE(va);
-    ptetype current_page_table = root_page_table;
-
-    for (uint8 lev = LEVELS - 1; lev > 0 ; lev++) {
-        ptetype tmp_page_addr = (page_addr >> ((lev + 1) * VPNSIZE)) & (MAXPTE << PTE_LOG);
-        ptetype pte = *(usize*)(current_page_table + tmp_page_addr);
-        
-        if (!(pte & VALID)) {
-            pte = p_alloc(T);
-            *(usize*)(current_page_table + tmp_page_addr) = pte;
-        }
-        current_page_table = pte ;
-    }
-}*/
 
 void map_kernel() {
     usize kernel_pages = ROUNDDOWN_PAGE(endkernel) - ROUNDDOWN_PAGE(startkernel);
     for (usize i = 0; i < kernel_pages; i++) {
-        map_page((usize) (ROUNDDOWN_PAGE(startkernel) + (i * PAGESIZE)));
+        map_page((usize) (ROUNDDOWN_PAGE(startkernel)) + (i * PAGESIZE));
     }
 }
 
 int unmap_page(usize va) {
-    ptetype *p_addr =( ~(PAGESIZE - 1) << ( VPNSIZE * (LEVELS - 1))) | ((va >> PAGESIZE) << PTE_LOG);
+    ptetype *p_addr = (ptetype*) (( ~(PAGESIZE - 1) << ( VPNSIZE * (LEVELS - 1))) | ((va >> PAGE_LOG) << PTE_LOG));
     zero_page(&va);
     *p_addr &= (!VALID);
     pfree(va,((usize)p_addr &  ~(PAGESIZE - 1)));

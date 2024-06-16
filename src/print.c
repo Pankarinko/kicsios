@@ -18,25 +18,25 @@
 
 
 void init_UART(void) {
-    LCR = UART_LCR_8BIT;
-    FCR = UART_FCR_FIFO_ENABLE | UART_FCR_14B;
+  LCR = UART_LCR_8BIT;
+  FCR = UART_FCR_FIFO_ENABLE | UART_FCR_14B;
 }
 
 void output_UART(char c) {
-    init_UART();
-    THR = c;
+  init_UART();
+  THR = c;
 }
 
 
 void prints(char* word) {
-    int char_count;
-    while (*word != '\0') {
-        char_count = 0;
-        if (LSR != UART_LSR_THR_EMPTY) {
-            while (char_count < 14) {
-                output_UART((uint8) *word);
-                word++;
-                if (*word == '\0') return;
+  int char_count;
+  while (*word != '\0') {
+    char_count = 0;
+    if (LSR != UART_LSR_THR_EMPTY) {
+        while (char_count < 14) {
+          output_UART((uint8) *word);
+          word++;
+          if (*word == '\0') return;
             }
         }
     }
@@ -49,8 +49,8 @@ void println(char* word) {
 
 void print_u32(uint32 num) {
     if (num == 0) {
-         output_UART('0');
-         return;
+        output_UART('0');
+        return;
     }
     char space[11];
     space[10] = 0;
@@ -58,7 +58,7 @@ void print_u32(uint32 num) {
     uint32 digit = 0;
     while (num != 0) {
       digit = num % 10;
-       word--;
+      word--;
       *word = 48 + digit;
       num = (num - digit) / 10;
       }
@@ -67,8 +67,8 @@ void print_u32(uint32 num) {
 
 void print_u64(uint64 num) {
     if (num == 0) {
-         output_UART('0');
-         return;
+        output_UART('0');
+        return;
     }
     char space[21];
     space[20] = 0;
@@ -129,7 +129,7 @@ void print_hex32(uint32 num) {
   uint32 num2 = num;
   int shift = 4;
   uint8 lead = 0;
-   for (uint8 i = 0; i < 8; i++) {
+  for (uint8 i = 0; i < 8; i++) {
     num = num2 >> 28;
     if (num != 0) lead = 1;
     if (lead != 0) {
@@ -148,7 +148,7 @@ void print_hex64(uint64 num) {
   char c = 48;
   output_UART('0');
   output_UART('x');
-   if (num == 0) {
+  if (num == 0) {
       output_UART(c);
       return;
     } 
@@ -171,5 +171,5 @@ void print_hex64(uint64 num) {
 }
 
 void print_hex(usize num) {
-    PRINTHEX(num);
+  PRINTHEX(num);
 }

@@ -15,4 +15,3 @@ void c_entry(void) {
     set_root_page_table_bare();
     terminate();
 }
-
