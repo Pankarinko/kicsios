@@ -10,7 +10,7 @@
 #define THR *(volatile uint8*) (UART_BASE + THR_OFFSET)
 #define LSR *(volatile uint8*) (UART_BASE + LSR_OFFSET)
 
-#define UART_LCR_8BIT 8
+#define UART_LCR_8BIT 3
 #define UART_FCR_FIFO_ENABLE 2
 #define UART_FCR_14B 0xC0
 #define UART_LSR_DATA_AVAILABLE 1

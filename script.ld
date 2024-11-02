@@ -11,10 +11,10 @@ PHDRS {
 }
 
 SECTIONS {
- .text : {
-    . = ALIGN(8);
+  .text : {
+       . = ALIGN(8);
     PROVIDE(startkernel = .);
-    *(.text)
+    build/asm_entry.o( .text)
     *(.text*)
     PROVIDE(endkernel = .);
  } > RAM : text
