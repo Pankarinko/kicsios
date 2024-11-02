@@ -1,6 +1,6 @@
 .text
 
-.global asm_entry
+.global asm_entry, "ax"
 
 asm_entry:
     la sp, asm_stackbottom

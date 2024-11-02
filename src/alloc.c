@@ -12,7 +12,7 @@ usize firstfree;
 void createfreelist(void) {
     firstfree = (ROOT_PAGE_TABLE) >> PAGE_LOG;
     usize i;
-    for (i = ROOT_PAGE_TABLE; i < MEMORYSTART + MEMORYSIZE - PAGESIZE; i += PAGESIZE ) { 
+    for (i = ROOT_PAGE_TABLE; i < (usize) MEMORYSTART + MEMORYSIZE - PAGESIZE; i += PAGESIZE ) { 
             *(usize*) i = (i + PAGESIZE) >> PAGE_LOG;
     }
     *(usize*) i = NO_NEXT_FREE_PAGE;

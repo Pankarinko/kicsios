@@ -1,6 +1,5 @@
 #include "kstd.h"
 #include "vma.h"
-#include "alloc.h"
 
 void set_irq();
 
@@ -10,8 +9,7 @@ void terminate(void) {
 }
 
 void c_entry(void) {
-    set_irq();
-    //set_root_page_table();
-    set_root_page_table_bare();
+    initialize_vm();
+    prints("Mamma Mia");
     terminate();
 }

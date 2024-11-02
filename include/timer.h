@@ -1,0 +1,4 @@
+
+#define CLINT_BASE 0x2000000
+#define MTIME 0x7ff8
+#define MTIMECMP_BASE 0x0
